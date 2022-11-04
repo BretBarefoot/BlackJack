@@ -39,24 +39,12 @@ class Player:
             self.card1 = 10
         elif self.card2 > 10 and self.card2 < 14:
             self.card2 = 10
-        elif self.card1 == 14:
+
+        if self.card1 == 14: #ace
             self.card1 = 11
         elif self.card2 == 14:
             self.card2 = 11
-
-        #sets either dealer or players score off the deal
-        if isDealer == True:
-            dealer_score = self.card1 + self.card2
-        else:
-            player_score = self.card1 + self.card2    
-
-        if player_score > 21 and isDealer == False and card1 == 14:
-            card1 = 1
-            player_score = self.card1 + self.card2
-
-        elif player_score > 21 and isDealer == False and card2 == 14:
-            card2 = 1
-            player_score == self.card1 + self.card2
+ 
 
 
 def count_dealer_draw(score1,score2):
@@ -89,15 +77,31 @@ def say_phrase(phrase1,phrase2):
 
 
 
-def check_blackjack():        
-    if isDealer == True and dealer_score == 21:
-        print("Dealer Has BLACKJACK!!  " + self.random_card1 + " " + self.random_card2)    
+def check_blackjack_on_draw(d_score,p_score):        
+    if d_score == 21:
+        print("Dealer Has BlackJack!!   " + dealer_cards.random_card1 + dealer_cards.random_card2)
+    elif p_score == 21:
+        print("You have BlackJack!!!!   " + player_cards.random_card1 + player_cards.random_card2)
+    elif p_score == 21 and d_score == 21:
+        print("You both have BlackJack! It's a Push!")
+    else:
+        print("\nYour Current Score Is " + str(p_score) + "       The Dealer Has: " + str(dealer_cards.card1) + " showing.")
+        print("\nRemember the Dealer must hit on 16 and stand on anything over 17.") 
+        print("\nDo you want to Hit or Stay?")  
 
+def get_input():
+    player_input = input()
+    player_input = player_input.lower()
+    return player_input
 
-        #Checks for Player Blackjack on the deal
-    if isDealer == False and player_score == 21:
-        print("You WIN! BLACKJACK!!!!  " + self.random_card1 + " " + self.random_card2)
-
+def check_input(user_input):
+    if user_input == "hit":
+        pass
+    elif user_input == "stay":
+        pass
+    else:
+        print("\nInvalid Input.    \nType Hit or Stay and press Enter.")
+        get_input()
 
 
 
@@ -115,16 +119,15 @@ player_cards = Player(isDealer=False)
 p_score = count_player_draw(player_cards.card1, player_cards.card2)
 d_score = count_dealer_draw(dealer_cards.card1,dealer_cards.card2)
 
-if d_score == 21:
-    print("Dealer Has BlackJack!!   " + dealer_cards.random_card1 + dealer_cards.random_card2)
-elif p_score == 21:
-    print("You have BlackJack!!!!   " + player_cards.random_card1 + player_cards.random_card2)
-elif p_score == 21 and d_score == 21:
-    print("You both have BlackJack! It's a Push!")
-else:
-    print("\nYour Current Score Is " + str(p_score) + "       The Dealer Has: " + str(dealer_cards.card1) + " showing.")
-    print("\nRemember the Dealer must hit on 16 and stand on anything over 17.") 
-    print("\nDo you want to Hit or Stay?")            
+check_blackjack_on_draw(d_score, p_score)
+
+#user_input = get_input()
+#check_input(user_input)
+
+
+
+
+
 
 
 
