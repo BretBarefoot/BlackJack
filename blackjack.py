@@ -9,6 +9,8 @@ deck_dict = {key:value for key, value in (zip(deck_of_cards, card_value))}
 fresh_deck = deck_dict
 player_total = 0
 dealer_total = 0
+new_card = 0
+new_card2 = 0
 
 class Player:
 
@@ -34,7 +36,7 @@ class Player:
 
         #hides a dealer card and shows player cards and score
         if isDealer == True:
-            print(self.random_card1,end=""); time.sleep(1); print("      HIDDEN");time.sleep(1)
+            print(self.random_card1,end=""); time.sleep(1); print("      HIDDEN\n");time.sleep(1)
 
         else: 
             print(self.random_card1,end=""); time.sleep(1); print("         " + self.random_card2);time.sleep(1)
@@ -45,20 +47,29 @@ class Player:
         
         
 
-        self.new_card = random.choice(list(self.deck.keys()))
-        self.new_card_points = self.deck.get(self.new_card)
-        deck_dict.pop(self.new_card)
+        self.new_card2 = random.choice(list(self.deck.keys()))
+        self.new_card_points = self.deck.get(self.new_card2)
+        deck_dict.pop(self.new_card2)
         self.player_total = self.new_card_points + self.player_total
+        card_total = count_player_draw(player_cards.card1, player_cards.card2, self.new_card_points)
+        self.player_total = card_total
+
         time.sleep(2)
-        print("You Drew: " + self.new_card + "       Your points are: " + str(self.player_total))
+        print("You Drew: " + self.new_card2 + "       Your points are: " + str(self.player_total))
+               
+
         if self.player_total < 21:
-            time.sleep(1)
+            time.sleep(.5)
             print("Would you like to hit or stay?")
             get_input_hit_stay()
         elif self.player_total > 21:
-            print("Player Bust..")
-        time.sleep(2)
-        return self.new_card, self.new_card_points, self.player_total
+            time.sleep(.5)
+            print("\nPlayer Bust..")
+            time.sleep(.5)
+        elif self.player_total == 21:
+            time.sleep(.5)
+            get_input_hit_stay()
+        return self.new_card2, self.new_card_points, self.player_total
 
 
         
@@ -79,13 +90,16 @@ class Player:
 
             print("\nThe Dealer draws a card")
             time.sleep(2)
-            self.new_card = random.choice(list(self.deck.keys()))
-            self.new_card_points = self.deck.get(self.new_card)
-            deck_dict.pop(self.new_card)
-            print("\nThe Dealer Drew: " + self.new_card)
-            self.dealer_total = self.new_card_points + self.dealer_total
-            time.sleep(2)
-            print("\nThe Dealers Score is " + str(self.dealer_total))
+            self.new_card2 = random.choice(list(self.deck.keys()))
+            self.new_card_points = self.deck.get(self.new_card2)
+            deck_dict.pop(self.new_card2)
+            if (self.dealer_total + self.new_card_points) > 21 and self.new_card_points == 11:
+                self.new_card_points = 1
+            else:
+                print("\nThe Dealer Drew: " + self.new_card2)
+                self.dealer_total = self.new_card_points + self.dealer_total
+                time.sleep(2)
+                print("\nThe Dealers Score is " + str(self.dealer_total))
 
             if self.dealer_total >= 17 and self.dealer_total < 22:
                 check_scores(self.dealer_total, player_cards.player_total)
@@ -96,10 +110,15 @@ class Player:
             else:
                 print("\nThe Dealer draws a card")
                 time.sleep(1)
-                self.new_card = random.choice(list(self.deck.keys()))
-                self.new_card_points = self.deck.get(self.new_card)
-                deck_dict.pop(self.new_card)
-                print("\nThe Dealer Drew: " + self.new_card)
+                self.new_card2 = random.choice(list(self.deck.keys()))
+                self.new_card_points = self.deck.get(self.new_card2)
+                deck_dict.pop(self.new_card2)
+                
+                if (self.dealer_total + self.new_card_points) > 21 and self.new_card_points == 11:
+                    self.new_card_points = 1
+ 
+                
+                print("\nThe Dealer Drew: " + self.new_card2)
                 time.sleep(1)
                 self.dealer_total = self.new_card_points + self.dealer_total
                 print("\nThe Dealers Score is " + str(self.dealer_total)) 
@@ -112,10 +131,13 @@ class Player:
                 else:
                     print("\nThe Dealer draws a card")
                     time.sleep(1)
-                    self.new_card = random.choice(list(self.deck.keys()))
-                    self.new_card_points = self.deck.get(self.new_card)
-                    deck_dict.pop(self.new_card)
-                    print("\nThe Dealer Drew: " + self.new_card)
+                    self.new_card2 = random.choice(list(self.deck.keys()))
+                    self.new_card_points = self.deck.get(self.new_card2)
+                    deck_dict.pop(self.new_card2)
+                    if (self.dealer_total + self.new_card_points) > 21 and self.new_card_points == 11:
+                        self.new_card_points = 1
+                    
+                    print("\nThe Dealer Drew: " + self.new_card2)
                     time.sleep(1)
                     self.dealer_total = self.new_card_points + self.dealer_total
                     print("\nThe Dealers Score is " + str(self.dealer_total))
@@ -125,7 +147,7 @@ class Player:
                         pass                     
             
              
-def count_dealer_draw(score1,score2):
+def count_dealer_draw(score1,score2,new_card):
     if(score1+score2) > 21 and score1 == 11:
         score1 = 1
         dealer_points = score1 + score2
@@ -133,10 +155,23 @@ def count_dealer_draw(score1,score2):
     elif(score1+score2) > 21 and score2 == 11:
         score2 = 1
         dealer_points = score1 + score2
-        return dealer_points  
+        return dealer_points
+    elif(score1+score2+new_card) > 21 and new_card == 11:
+        new_card = 1
+        dealer_points = score1 + score2 + new_card
+        return dealer_points
+    elif(score1+score2+new_card) > 21 and score1 == 11:
+        score1 = 1
+        dealer_points = score1 + score2 + new_card
+        return dealer_points
+    elif(score1+score2+new_card) > 21 and score2 == 11:
+        score2 = 1
+        dealer_points = score1 + score2 + new_card
+        return dealer_points                     
     else:
         return score1 + score2
-def count_player_draw(score1,score2):
+
+def count_player_draw(score1,score2,new_card2):
     if(score1+score2) > 21 and score1 == 11:
         score1 = 1
         player_points = score1 + score2
@@ -144,9 +179,21 @@ def count_player_draw(score1,score2):
     elif(score1+score2) > 21 and score2 == 11:
         score2 = 1
         player_points = score1 + score2
-
+        return player_points
+    elif(score1+score2+new_card2) > 21 and new_card2 == 11:
+        new_card2 = 1
+        player_points = score1 + score2 + new_card2
+        return player_points
+    elif(score1+score2+new_card2) > 21 and score1 == 11:
+        score1 = 1
+        player_points = score1 + score2 + new_card2
+        return player_points
+    elif(score1+score2+new_card2) > 21 and score2 == 11:
+        score2 = 1
+        player_points = score1 + score2 + new_card2
+        return player_points                     
     else:
-        return score1 + score2   
+        return score1 + score2 + new_card2
 
 
 def check_scores(dealer_total, player_total):
@@ -166,17 +213,17 @@ def check_scores(dealer_total, player_total):
 def check_blackjack_on_draw():        
     if dealer_cards.dealer_total == 21:
         time.sleep(1)
-        print("Dealer Has BlackJack!!   " + dealer_cards.random_card1 + dealer_cards.random_card2)
+        print("\nDealer Has BlackJack!!   \n" + dealer_cards.random_card1 + dealer_cards.random_card2)
         return 1 #dealer win
 
     elif player_cards.player_total == 21:
         time.sleep(1)
-        print("You have BlackJack!!!!   " + player_cards.random_card1 + player_cards.random_card2)
+        print("\nYou have BlackJack!!!!   \n" + player_cards.random_card1 + player_cards.random_card2)
         return 2 #player win
   
     elif player_cards.player_total == 21 and dealer_cards.dealer_total == 21:
         time.sleep(1)
-        print("You both have BlackJack! It's a Push!")
+        print("\nYou both have BlackJack! It's a Push!\n")
         return 3 #push
 
     else:
@@ -184,7 +231,7 @@ def check_blackjack_on_draw():
         time.sleep(1)
         print("\nRemember the Dealer must hit on 16 and stand on anything over 17.") 
         time.sleep(1)
-        print("Do you want to Hit or Stay? Or Type Quit to stop playing.") 
+        print("Do you want to Hit or Stay? Or Type Quit to stop playing.\n") 
 
 
 def get_input_hit_stay():
@@ -197,15 +244,20 @@ def get_input_hit_stay():
 
 def check_input(user_input,isDealer=True):
     if user_input == "hit":
+        print()
         card, points, newtotal = player_cards.player_draw_card()
-        
         return card,points,user_input
-        ###################
+
     elif user_input == "stay":
         print("The Player Stood at " + str(player_cards.player_total))
+        print()
         time.sleep(1)
         dealer_cards.dealer_draw_cards()
         return user_input
+    elif player_cards.player_total == 21:
+        print("You have 21 Points! Passing to dealer!\n")
+        return "stay"
+        time.sleep(1)    
 
     else:
         print("Invalid Input.Type Hit or Stay or Quit and Press Enter.\n")
@@ -216,18 +268,18 @@ def check_input(user_input,isDealer=True):
 while True:
 
     print("-----------------NEW HAND---------------------")
-    time.sleep(1)
+    time.sleep(.5)
     print("The Dealers Cards are:") 
-    time.sleep(1)  
+    time.sleep(.5)  
     dealer_cards = Player(isDealer=True)
-    time.sleep(1)
+    time.sleep(.5)
     print("The Players Cards are:")
-    time.sleep(1)
+    time.sleep(.5)
     player_cards = Player(isDealer=False)
 
 
-    player_cards.player_total = count_player_draw(player_cards.card1, player_cards.card2)
-    dealer_cards.dealer_total = count_dealer_draw(dealer_cards.card1,dealer_cards.card2)
+    player_cards.player_total = count_player_draw(player_cards.card1, player_cards.card2, new_card2)
+    dealer_cards.dealer_total = count_dealer_draw(dealer_cards.card1,dealer_cards.card2, new_card)
 
     status = check_blackjack_on_draw()
 
@@ -236,7 +288,9 @@ while True:
 
     user_input = get_input_hit_stay()
 
-    if user_input == "stay":
-        print("\nuser stayed going to dealer draw")
-        new_dealer_total = dealer_cards.dealer_draw_cards()
+
+
+    print("\nShuffling Cards\n")
+    time.sleep(1)    
+    deck_dict = fresh_deck    
         
